@@ -1,0 +1,33 @@
+name: Contribution Bot
+
+on:
+  schedule:
+    # Runs every hour at minute 0
+    - cron: '0 * * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  contribute:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "Contribution Bot"
+          git config --global user.email "bot@github.com"
+
+      - name: Update contribution file
+        run: |
+          echo "Last contribution: $(date '+%Y-%m-%d %H:%M:%S')" > contributions.txt
+
+      - name: Commit and push
+        run: |
+          git add contributions.txt
+          git commit -m "Contribution update: $(date '+%Y-%m-%d %H:%M:%S')"
+          git push
